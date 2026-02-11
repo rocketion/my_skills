@@ -1,13 +1,13 @@
 ---
 name: doc-ssot-flow
-description: 文档驱动的 SSOT 维护技能。用于创建/更新 doc/project.md 与 doc/ 任务文档体系，确保变更闭环回写。
+description: 文档单一事实源（SSOT）执行工作流：按规则完成 doc/ 初始化、任务文档维护与 project.md 闭环回写。
 ---
 
 # Doc-SSOT-Flow
 
 ## 概述
 
-以 references/collab_rules.md 为唯一规则来源，执行文档驱动开发并维护项目单一事实源（SSOT）。任何流程与输出必须与规则文件一致，不在此重复规则细节。
+以 `references/collab_rules.md` 为唯一规则源，按固定步骤维护 `doc/` 文档体系，并确保任务完成前完成 `doc/project.md` 的闭环回写。
 
 ## 工作流
 
