@@ -5,34 +5,30 @@ description: 文档单一事实源（SSOT）执行工作流：按规则完成 do
 
 # Doc-SSOT-Flow
 
-## 概述
+## 目标
 
-以 `references/collab_rules.md` 为唯一规则源，按固定步骤维护 `doc/` 文档体系，并确保任务完成前完成 `doc/project.md` 的闭环回写。
+- 用 `doc/` 作为单一事实源（SSOT）：先落文档，再改代码。
+- 保持 `doc/project.md`、任务文档与代码变更一致（闭环回写）。
 
-## 工作流
+## 何时使用
 
-1. 读取并遵循 references/collab_rules.md（后续所有动作以其为准）。
-2. 确认 doc/ 是否存在；如不存在，先创建 doc/。
-3. 若无 doc/project.md，按 references/collab_rules.md 的模板创建并替换 TODO。
-4. 若已有 doc/project.md，仅按规则中的结构与约束进行增量更新。
-5. 执行过程中必须采用任务工作模式：维护 doc/tasks.md 清单，并以 doc/task-xxx.md 进行迭代记录。
+- 新项目初始化、或引入新模块/子系统。
+- 开始一个可交付任务（`task-xxx`）。
+- 影响模块职责/接口/数据流/依赖/权限/状态机等全局规则。
 
-## 闭环规则
+## 产物
 
-1. 以 references/collab_rules.md 的闭环要求为准；此处仅补充不重复的提醒。
-2. 任何开发工作若改变模块职责、接口、数据流、依赖、权限或状态机，必须回写 doc/project.md。
-3. 回写完成前，禁止宣告任务 DONE。
-4. 若单文件修改超过 30% 且涉及核心架构，先说明理由并获得明确批准。
+- `doc/project.md`：全局技术基准（结构与约束见规则源）。
+- `doc/tasks.md`：任务注册表（仅索引与状态）。
+- `doc/task-xxx.md`：单任务工作区（以 Issue-xxx 为单位追加记录）。
 
-## 输出要求
+## 最小流程
 
-1. 全中文。
-2. 文档为 UTF-8 无 BOM。
-3. 仅记录最终方案与原因，避免过程性叙述与空泛形容词。
+1. 阅读并遵循唯一规则源 `references/ssot_rules.md`。
+2. 初始化 `doc/`，补齐 `doc/project.md` 与 `doc/tasks.md`。
+3. 新建/更新 `doc/task-xxx.md`，拆解 Issue 并按 Issue 记录测试与结果。
+4. 开发中持续同步 `doc/task-xxx.md`；涉及全局变更则同步回写 `doc/project.md`。
 
-## 资源
+## 参考（SSOT）
 
-### references/
-- collab_rules.md：协作规范与文档约束。
-
-### assets/
+- `references/ssot_rules.md`
