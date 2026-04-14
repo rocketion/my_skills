@@ -1,0 +1,4 @@
+interface:
+  display_name: "Doc Driven Dev"
+  short_description: "以文档驱动开发：用 project 首章维护全局约束，用 project/task 推进工作，用 finding 记录并行发现项"
+  default_prompt: "按 Doc Driven Dev 的约定推进工作：用 `doc/project.md` 的第 1 章维护短小稳定的全局规则，用其余章节展开当前工作域基线，用 `doc/tasks.md` 管理任务索引，用 `doc/task-编号-概述.md` 作为最小实施单元；如存在并行发现，按 `doc/findings.md` 记录 `finding-编号-概述`。"

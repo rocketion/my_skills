@@ -1,4 +1,0 @@
-interface:
-  display_name: "Doc SSOT Flow"
-  short_description: "以 doc/ 为单一事实源，驱动任务文档、全局技术基准与回写闭环"
-  default_prompt: "按 Doc SSOT Flow 的 SOP 维护 doc/project.md、doc/tasks.md 与 doc/task-编号-概述.md，任务命名统一使用 task-编号-概述，Issue 命名统一使用 issue-编号-概述，先更新文档，再推进 Issue、回写与提交闭环"

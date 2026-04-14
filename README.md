@@ -12,7 +12,7 @@
 
 | 名称 | 简述 | 入口 |
 | --- | --- | --- |
-| `doc-ssot-flow` | 以 `doc/` 为单一事实源推进开发：在 `SKILL.md` 中定义 SOP，在 `references/` 中提供 `project/tasks/task` 模板，并完成任务文档、回写与提交闭环 | `skills/doc-ssot-flow/SKILL.md` |
+| `doc-driven-dev` | 以文档驱动开发：在 `SKILL.md` 中定义 `project/task` 主线与 `finding` 并行记录规则，并要求把全局约束统一收敛到 `project.md` 第 1 章 | `skills/doc-driven-dev/SKILL.md` |
 
 ## 新增 Skill 约定
 
