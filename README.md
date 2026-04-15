@@ -12,7 +12,7 @@
 
 | 名称 | 简述 | 入口 |
 | --- | --- | --- |
-| `doc-driven-dev` | 以文档驱动开发：在 `SKILL.md` 中定义 `project/task` 主线与 `finding` 并行记录规则，并要求把全局约束统一收敛到 `project.md` 第 1 章 | `skills/doc-driven-dev/SKILL.md` |
+| `doc-driven-dev` | 以文档驱动开发：在 `SKILL.md` 中定义 `project/task` 主线与 `finding` 并行记录规则，并要求用 `project.md` 承载项目级规则、介绍、目标与设计 | `skills/doc-driven-dev/SKILL.md` |
 
 ## 新增 Skill 约定
 
