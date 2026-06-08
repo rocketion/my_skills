@@ -14,28 +14,13 @@ import chardet
 
 DEFAULT_MIN_CONFIDENCE = 0.80
 
-ENCODING_MAP = {
-    "ascii": "utf-8",
-    "gb2312": "gb18030",
-    "gbk": "gb18030",
-    "iso-8859-1": "windows-1252",
-}
-
-
-def normalize_encoding_name(encoding: str) -> str:
-    return encoding.strip().lower().replace("_", "-")
-
-
-def map_encoding(encoding: str) -> str:
-    return ENCODING_MAP.get(normalize_encoding_name(encoding), encoding)
-
 
 def normalize_crlf(text: str) -> str:
     text = text.replace("\r\n", "\n").replace("\r", "\n")
     return text.replace("\n", "\r\n")
 
 
-def detect_encoding(raw: bytes, min_confidence: float) -> tuple[str, str, float, dict[str, Any]]:
+def detect_encoding(raw: bytes, min_confidence: float) -> tuple[str, float, dict[str, Any]]:
     result = chardet.detect(raw)
     detected = result.get("encoding")
     confidence = float(result.get("confidence") or 0.0)
@@ -49,8 +34,7 @@ def detect_encoding(raw: bytes, min_confidence: float) -> tuple[str, str, float,
             f"confidence={confidence:.4f}, threshold={min_confidence:.4f}"
         )
 
-    mapped = map_encoding(detected)
-    return detected, mapped, confidence, result
+    return detected, confidence, result
 
 
 def validate_output(path: Path) -> dict[str, Any]:
@@ -90,13 +74,13 @@ def convert_to_utf8_bom_crlf(
         raise FileExistsError(f"输出文件已存在: {output_file}")
 
     raw = input_file.read_bytes()
-    detected, encoding, confidence, detection_result = detect_encoding(raw, min_confidence)
+    detected, confidence, detection_result = detect_encoding(raw, min_confidence)
 
     try:
-        text = raw.decode(encoding, errors="strict")
+        text = raw.decode(detected, errors="strict")
     except UnicodeDecodeError as exc:
         raise ValueError(
-            f"严格解码失败: detected={detected}, mapped={encoding}, "
+            f"严格解码失败: detected={detected}, "
             f"confidence={confidence:.4f}, error={exc}"
         ) from exc
 
@@ -115,7 +99,6 @@ def convert_to_utf8_bom_crlf(
         "input": str(input_file),
         "output": str(output_file),
         "detected_encoding": detected,
-        "mapped_encoding": encoding,
         "confidence": round(confidence, 4),
         "min_confidence": min_confidence,
         "detection": detection_result,
