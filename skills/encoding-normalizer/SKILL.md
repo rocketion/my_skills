@@ -49,7 +49,7 @@ if [ ! -x .venv/bin/python ]; then
 fi
 
 .venv/bin/python -m pip install -q chardet
-.venv/bin/python skills/encoding-normalizer/references/to_utf8_bom_crlf.py input.txt output.txt
+.venv/bin/python skills/encoding-normalizer/scripts/to_utf8_bom_crlf.py input.txt output.txt
 ```
 
 Windows PowerShell：
@@ -67,7 +67,7 @@ if (-not (Test-Path $Python)) {
 }
 
 & $Python -m pip install -q chardet
-& $Python skills\encoding-normalizer\references\to_utf8_bom_crlf.py input.txt output.txt
+& $Python skills\encoding-normalizer\scripts\to_utf8_bom_crlf.py input.txt output.txt
 ```
 
 ## 原则
@@ -81,26 +81,26 @@ if (-not (Test-Path $Python)) {
 7. 换行统一为 CRLF。
 8. 输出后校验 BOM、双 BOM、裸 LF、裸 CR 和 UTF-8 可解码性。
 
-## 推荐脚本
+## 脚本
 
-参考实现：`references/to_utf8_bom_crlf.py`
+可执行脚本位于 `scripts/to_utf8_bom_crlf.py`。
 
 执行：
 
 ```bash
-.venv/bin/python skills/encoding-normalizer/references/to_utf8_bom_crlf.py input.txt output.txt
+.venv/bin/python skills/encoding-normalizer/scripts/to_utf8_bom_crlf.py input.txt output.txt
 ```
 
 调整置信度：
 
 ```bash
-.venv/bin/python skills/encoding-normalizer/references/to_utf8_bom_crlf.py input.txt output.txt --min-confidence 0.85
+.venv/bin/python skills/encoding-normalizer/scripts/to_utf8_bom_crlf.py input.txt output.txt --min-confidence 0.85
 ```
 
 覆盖输出：
 
 ```bash
-.venv/bin/python skills/encoding-normalizer/references/to_utf8_bom_crlf.py input.txt output.txt --overwrite
+.venv/bin/python skills/encoding-normalizer/scripts/to_utf8_bom_crlf.py input.txt output.txt --overwrite
 ```
 
 ## 流程
