@@ -25,26 +25,49 @@ description: 将未知编码的文本文件按检测置信度转换为 UTF-8 BOM
 
 ## 运行前提
 
-1. 不在目标项目目录内安装依赖。
-2. 不在目标项目目录内创建虚拟环境、缓存目录或临时输出目录。
-3. 依赖必须安装到临时目录下的隔离虚拟环境，避免污染目标项目 Git 工作区。
-4. 输入文件和输出文件可以位于目标项目内；运行环境本身必须位于项目外部。
-5. 转换完成后只保留用户指定的输出文件，其余临时环境可以删除。
+1. 默认使用目标项目根目录下的 `.venv` 作为本地虚拟环境。
+2. 创建 `.venv` 前必须先确认它不会进入 Git 工作区。
+3. 若 `.venv` 已被 Git 忽略，则可以创建或复用。
+4. 若 `.venv` 未被 Git 忽略，必须停止并提示用户先处理忽略规则。
+5. 不允许为了安装依赖而直接污染系统 Python 环境。
+6. 不允许在未确认 Git 忽略规则时创建虚拟环境、缓存目录或依赖包。
 
-推荐临时环境位置：
+推荐检查命令：
 
 ```bash
-python -m venv /tmp/encoding-normalizer-venv
-/tmp/encoding-normalizer-venv/bin/python -m pip install chardet
-/tmp/encoding-normalizer-venv/bin/python references/to_utf8_bom_crlf.py input.txt output.txt
+git check-ignore -q .venv || {
+  echo ".venv 未被 Git 忽略，停止执行"
+  exit 1
+}
 ```
 
-Windows 可使用用户临时目录：
+推荐创建或复用虚拟环境：
+
+```bash
+if [ ! -x .venv/bin/python ]; then
+  python -m venv .venv
+fi
+
+.venv/bin/python -m pip install -q chardet
+.venv/bin/python skills/encoding-normalizer/references/to_utf8_bom_crlf.py input.txt output.txt
+```
+
+Windows PowerShell：
 
 ```powershell
-python -m venv $env:TEMP\encoding-normalizer-venv
-$env:TEMP\encoding-normalizer-venv\Scripts\python.exe -m pip install chardet
-$env:TEMP\encoding-normalizer-venv\Scripts\python.exe references\to_utf8_bom_crlf.py input.txt output.txt
+git check-ignore -q .venv
+if ($LASTEXITCODE -ne 0) {
+    Write-Error ".venv 未被 Git 忽略，停止执行"
+    exit 1
+}
+
+$Python = ".venv\Scripts\python.exe"
+if (-not (Test-Path $Python)) {
+    python -m venv .venv
+}
+
+& $Python -m pip install -q chardet
+& $Python skills\encoding-normalizer\references\to_utf8_bom_crlf.py input.txt output.txt
 ```
 
 ## 原则
@@ -65,33 +88,36 @@ $env:TEMP\encoding-normalizer-venv\Scripts\python.exe references\to_utf8_bom_crl
 执行：
 
 ```bash
-/tmp/encoding-normalizer-venv/bin/python references/to_utf8_bom_crlf.py input.txt output.txt
+.venv/bin/python skills/encoding-normalizer/references/to_utf8_bom_crlf.py input.txt output.txt
 ```
 
 调整置信度：
 
 ```bash
-/tmp/encoding-normalizer-venv/bin/python references/to_utf8_bom_crlf.py input.txt output.txt --min-confidence 0.85
+.venv/bin/python skills/encoding-normalizer/references/to_utf8_bom_crlf.py input.txt output.txt --min-confidence 0.85
 ```
 
 覆盖输出：
 
 ```bash
-/tmp/encoding-normalizer-venv/bin/python references/to_utf8_bom_crlf.py input.txt output.txt --overwrite
+.venv/bin/python skills/encoding-normalizer/references/to_utf8_bom_crlf.py input.txt output.txt --overwrite
 ```
 
 ## 流程
 
-1. 在目标项目外部创建临时虚拟环境。
-2. 在临时虚拟环境中安装检测依赖。
-3. 读取原始字节。
-4. 调用 `chardet.detect` 获取 `encoding` 和 `confidence`。
-5. 若无编码结果或置信度不足，失败退出。
-6. 使用检测到的编码严格解码。
-7. 将 `CRLF`、`CR`、`LF` 统一归一为 `LF`。
-8. 再将 `LF` 统一转换为 `CRLF`。
-9. 使用 `utf-8-sig` 写出。
-10. 校验输出格式。
+1. 定位目标项目根目录。
+2. 检查 `.venv` 是否被 Git 忽略。
+3. 若未被忽略，停止并提示用户处理忽略规则。
+4. 若已被忽略，复用现有 `.venv`；不存在时创建。
+5. 在 `.venv` 中安装或确认检测依赖。
+6. 读取原始字节。
+7. 调用 `chardet.detect` 获取 `encoding` 和 `confidence`。
+8. 若无编码结果或置信度不足，失败退出。
+9. 使用检测到的编码严格解码。
+10. 将 `CRLF`、`CR`、`LF` 统一归一为 `LF`。
+11. 再将 `LF` 统一转换为 `CRLF`。
+12. 使用 `utf-8-sig` 写出。
+13. 校验输出格式。
 
 ## 验收
 
@@ -103,4 +129,4 @@ $env:TEMP\encoding-normalizer-venv\Scripts\python.exe references\to_utf8_bom_crl
 - 正文中没有裸 CR。
 - 可用 `utf-8-sig` 严格解码。
 - 日志记录输入路径、输出路径、检测编码和置信度。
-- 目标项目 Git 工作区不应出现虚拟环境、依赖包、缓存目录或临时运行文件。
+- `.venv`、依赖包和缓存目录不应出现在 `git status` 中。
