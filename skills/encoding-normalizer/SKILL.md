@@ -20,7 +20,6 @@ description: 将未知编码的文本文件按检测置信度转换为 UTF-8 BOM
 
 ## 不适用场景
 
-- JSON、源码、协议内容等明确不应写入 BOM 的格式，除非用户确认接收方接受 BOM。
 - 二进制文件、压缩包、Office 文档、图片、数据库文件。
 - 需要在低置信度下仍强制转换的任务。
 
@@ -68,16 +67,11 @@ python references/to_utf8_bom_crlf.py input.txt output.txt --overwrite
 1. 读取原始字节。
 2. 调用 `chardet.detect` 获取 `encoding` 和 `confidence`。
 3. 若无编码结果或置信度不足，失败退出。
-4. 对常见检测结果做保守映射：
-   - `ascii` → `utf-8`
-   - `gb2312` → `gb18030`
-   - `gbk` → `gb18030`
-   - `iso-8859-1` → `windows-1252`
-5. 使用映射后的编码严格解码。
-6. 将 `CRLF`、`CR`、`LF` 统一归一为 `LF`。
-7. 再将 `LF` 统一转换为 `CRLF`。
-8. 使用 `utf-8-sig` 写出。
-9. 校验输出格式。
+4. 使用检测到的编码严格解码。
+5. 将 `CRLF`、`CR`、`LF` 统一归一为 `LF`。
+6. 再将 `LF` 统一转换为 `CRLF`。
+7. 使用 `utf-8-sig` 写出。
+8. 校验输出格式。
 
 ## 验收
 
@@ -88,4 +82,4 @@ python references/to_utf8_bom_crlf.py input.txt output.txt --overwrite
 - 正文中没有裸 LF。
 - 正文中没有裸 CR。
 - 可用 `utf-8-sig` 严格解码。
-- 日志记录输入路径、输出路径、检测编码、映射编码和置信度。
+- 日志记录输入路径、输出路径、检测编码和置信度。
