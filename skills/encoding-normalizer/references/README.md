@@ -4,22 +4,40 @@
 
 ## 运行前提
 
-依赖和虚拟环境必须放在目标项目目录外，避免污染目标项目的 Git 工作区。
+默认使用目标项目根目录下的 `.venv` 作为本地虚拟环境。创建前必须确认 `.venv` 已被 Git 忽略；若未被忽略，必须停止并先处理忽略规则。
 
 Linux/macOS 示例：
 
 ```bash
-python -m venv /tmp/encoding-normalizer-venv
-/tmp/encoding-normalizer-venv/bin/python -m pip install chardet
-/tmp/encoding-normalizer-venv/bin/python to_utf8_bom_crlf.py input.txt output.txt
+git check-ignore -q .venv || {
+  echo ".venv 未被 Git 忽略，停止执行"
+  exit 1
+}
+
+if [ ! -x .venv/bin/python ]; then
+  python -m venv .venv
+fi
+
+.venv/bin/python -m pip install -q chardet
+.venv/bin/python skills/encoding-normalizer/references/to_utf8_bom_crlf.py input.txt output.txt
 ```
 
 Windows 示例：
 
 ```powershell
-python -m venv $env:TEMP\encoding-normalizer-venv
-$env:TEMP\encoding-normalizer-venv\Scripts\python.exe -m pip install chardet
-$env:TEMP\encoding-normalizer-venv\Scripts\python.exe to_utf8_bom_crlf.py input.txt output.txt
+git check-ignore -q .venv
+if ($LASTEXITCODE -ne 0) {
+    Write-Error ".venv 未被 Git 忽略，停止执行"
+    exit 1
+}
+
+$Python = ".venv\Scripts\python.exe"
+if (-not (Test-Path $Python)) {
+    python -m venv .venv
+}
+
+& $Python -m pip install -q chardet
+& $Python skills\encoding-normalizer\references\to_utf8_bom_crlf.py input.txt output.txt
 ```
 
 ## 用法
@@ -27,13 +45,13 @@ $env:TEMP\encoding-normalizer-venv\Scripts\python.exe to_utf8_bom_crlf.py input.
 指定更高置信度阈值：
 
 ```bash
-/tmp/encoding-normalizer-venv/bin/python to_utf8_bom_crlf.py input.txt output.txt --min-confidence 0.85
+.venv/bin/python skills/encoding-normalizer/references/to_utf8_bom_crlf.py input.txt output.txt --min-confidence 0.85
 ```
 
 覆盖已有输出文件：
 
 ```bash
-/tmp/encoding-normalizer-venv/bin/python to_utf8_bom_crlf.py input.txt output.txt --overwrite
+.venv/bin/python skills/encoding-normalizer/references/to_utf8_bom_crlf.py input.txt output.txt --overwrite
 ```
 
 ## 策略
@@ -44,4 +62,4 @@ $env:TEMP\encoding-normalizer-venv\Scripts\python.exe to_utf8_bom_crlf.py input.
 - 所有换行统一为 CRLF。
 - 使用 `utf-8-sig` 写出，输出文件带 UTF-8 BOM。
 - 写出后验证 BOM、双 BOM、裸 LF 和裸 CR。
-- 虚拟环境、依赖包和缓存目录不得写入目标项目目录。
+- `.venv`、依赖包和缓存目录不应出现在 `git status` 中。
