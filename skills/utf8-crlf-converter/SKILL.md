@@ -1,37 +1,43 @@
 ---
-name: utf8-bom-crlf-converter
-description: 将文本文件转换为 UTF-8 with BOM + CRLF，并校验输出文件格式。当用户要求统一文本编码、转换为 UTF-8 BOM、统一 CRLF 换行、校验文本文件编码或处理 Windows 文本格式时触发。
+name: utf8-crlf-converter
+description: 将文本文件转换为 UTF-8 + CRLF，并校验输出文件格式。支持 UTF-8 with BOM + CRLF 和 UTF-8 without BOM + CRLF 两种目标格式。当用户要求统一文本编码、转换为 UTF-8、统一 CRLF 换行、校验文本文件编码或处理 Windows 文本格式时触发。
 ---
 
-# UTF-8 BOM CRLF Converter
+# UTF-8 CRLF Converter
 
 ## 概述
 
-本 Skill 用于将文本文件转换为 `UTF-8 with BOM + CRLF`，并校验文件是否满足目标格式。
+本 Skill 用于将文本文件转换为 `UTF-8 + CRLF`，并校验文件是否满足目标格式。
 
-该 Skill 面向文本文件处理场景。执行时先检查运行环境，再调用脚本原地转换文件，最后调用脚本校验结果。
+该 Skill 是一个 UTF-8/CRLF 文本格式转换 Skill，内部包含两个功能：
+
+- `convert-utf8-crlf-with-bom`
+- `convert-utf8-crlf-without-bom`
+
+两个功能共享同一个脚本。转换流程、编码检测、严格解码、CRLF 归一和执行分支保持一致；区别只在目标格式是否要求 UTF-8 BOM，以及对应的校验规则。
 
 ## 目录结构
 
 ```text
-skills/utf8-bom-crlf-converter/
+skills/utf8-crlf-converter/
   SKILL.md
   scripts/
-    convert_utf8_bom_crlf.py
+    convert_utf8_crlf.py
     requirements.txt
 ```
 
 - `SKILL.md`：Skill 入口说明。
-- `scripts/convert_utf8_bom_crlf.py`：文本格式转换与校验脚本。
+- `scripts/convert_utf8_crlf.py`：文本格式转换与校验脚本。
 - `scripts/requirements.txt`：脚本依赖声明。
 
 ## 功能清单
 
 | 功能 | 说明 | 脚本 |
 | --- | --- | --- |
-| `convert-utf8-bom-crlf` | 将文本文件转换为 `UTF-8 with BOM + CRLF`，并校验文件格式 | `scripts/convert_utf8_bom_crlf.py` |
+| `convert-utf8-crlf-with-bom` | 将文本文件转换为 `UTF-8 with BOM + CRLF`，并校验文件格式 | `scripts/convert_utf8_crlf.py` |
+| `convert-utf8-crlf-without-bom` | 将文本文件转换为 `UTF-8 without BOM + CRLF`，并校验文件格式 | `scripts/convert_utf8_crlf.py` |
 
-## 功能：convert-utf8-bom-crlf
+## 功能：convert-utf8-crlf-with-bom
 
 ### 目标
 
@@ -46,7 +52,7 @@ skills/utf8-bom-crlf-converter/
 - 正文换行统一为 CRLF。
 - 正文不存在裸 LF。
 - 正文不存在裸 CR。
-- 文件可用 `utf-8-sig` 严格解码。
+- 文件可严格解码为 UTF-8 文本。
 
 ### 执行步骤
 
@@ -58,7 +64,7 @@ skills/utf8-bom-crlf-converter/
 
 - 默认在项目根目录执行命令。
 - 默认使用当前系统 `python` 命令。
-- 默认从 `skills/utf8-bom-crlf-converter/scripts/requirements.txt` 安装依赖。
+- 默认从 `skills/utf8-crlf-converter/scripts/requirements.txt` 安装依赖。
 
 Windows PowerShell：
 
@@ -81,7 +87,7 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-python -m pip install -r skills/utf8-bom-crlf-converter/scripts/requirements.txt
+python -m pip install -r skills/utf8-crlf-converter/scripts/requirements.txt
 if ($LASTEXITCODE -ne 0) {
     Write-Error "依赖安装失败。请检查 Python、pip、网络和 requirements.txt 后重试。"
     exit 1
@@ -106,7 +112,7 @@ git rev-parse --is-inside-work-tree >/dev/null || {
   exit 1
 }
 
-python -m pip install -r skills/utf8-bom-crlf-converter/scripts/requirements.txt || {
+python -m pip install -r skills/utf8-crlf-converter/scripts/requirements.txt || {
   echo "依赖安装失败。请检查 Python、pip、网络和 requirements.txt 后重试。"
   exit 1
 }
@@ -124,13 +130,13 @@ python -m pip install -r skills/utf8-bom-crlf-converter/scripts/requirements.txt
 命令格式：
 
 ```bash
-python skills/utf8-bom-crlf-converter/scripts/convert_utf8_bom_crlf.py convert <file>
+python skills/utf8-crlf-converter/scripts/convert_utf8_crlf.py convert-with-bom <file>
 ```
 
 示例：
 
 ```bash
-python skills/utf8-bom-crlf-converter/scripts/convert_utf8_bom_crlf.py convert input.txt
+python skills/utf8-crlf-converter/scripts/convert_utf8_crlf.py convert-with-bom input.txt
 ```
 
 默认值：
@@ -144,7 +150,7 @@ python skills/utf8-bom-crlf-converter/scripts/convert_utf8_bom_crlf.py convert i
 指定最低编码检测置信度：
 
 ```bash
-python skills/utf8-bom-crlf-converter/scripts/convert_utf8_bom_crlf.py convert input.txt --min-confidence 0.85
+python skills/utf8-crlf-converter/scripts/convert_utf8_crlf.py convert-with-bom input.txt --min-confidence 0.85
 ```
 
 执行分支：
@@ -159,27 +165,54 @@ python skills/utf8-bom-crlf-converter/scripts/convert_utf8_bom_crlf.py convert i
 命令格式：
 
 ```bash
-python skills/utf8-bom-crlf-converter/scripts/convert_utf8_bom_crlf.py validate <file>
+python skills/utf8-crlf-converter/scripts/convert_utf8_crlf.py validate-with-bom <file>
 ```
 
 示例：
 
 ```bash
-python skills/utf8-bom-crlf-converter/scripts/convert_utf8_bom_crlf.py validate input.txt
+python skills/utf8-crlf-converter/scripts/convert_utf8_crlf.py validate-with-bom input.txt
 ```
 
 默认值：
 
 - 默认校验目标文件本身。
-- 默认按字节检查 UTF-8 BOM 和双 UTF-8 BOM。
+- 默认要求文件开头存在 UTF-8 BOM。
+- 默认按字节检查双 UTF-8 BOM。
 - 默认按正文检查裸 LF 和裸 CR。
-- 默认使用 `utf-8-sig` 严格解码验证 UTF-8 合法性。
+- 默认使用严格解码验证 UTF-8 合法性。
 - 默认校验失败返回非零退出码。
 
 执行分支：
 
 - 校验成功：文件视为有效产物。
 - 校验失败：文件不视为有效产物，保留脚本结构化输出作为校验结果。
+
+## 功能：convert-utf8-crlf-without-bom
+
+### 目标
+
+将一个文本文件原地转换为 `UTF-8 without BOM + CRLF` 格式。
+
+该功能复用 `convert-utf8-crlf-with-bom` 的执行流程，只调整目标格式和校验规则。
+
+与 `convert-utf8-crlf-with-bom` 的差异：
+
+- Step 2 转换命令改为：
+
+```bash
+python skills/utf8-crlf-converter/scripts/convert_utf8_crlf.py convert-without-bom <file>
+```
+
+- Step 2 默认输出格式改为 `UTF-8 without BOM + CRLF`。
+- Step 3 校验命令改为：
+
+```bash
+python skills/utf8-crlf-converter/scripts/convert_utf8_crlf.py validate-without-bom <file>
+```
+
+- Step 3 默认要求文件开头不存在 UTF-8 BOM。
+- 其他执行步骤、默认最低编码检测置信度、严格解码策略、CRLF 规则和执行分支与 `convert-utf8-crlf-with-bom` 相同。
 
 ## 注意事项
 

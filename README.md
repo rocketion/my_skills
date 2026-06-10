@@ -12,7 +12,7 @@
 
 | 名称 | 简述 | 入口 |
 | --- | --- | --- |
-| `utf8-bom-crlf-converter` | 将文本文件转换为 UTF-8 with BOM + CRLF，并校验输出文件格式 | `skills/utf8-bom-crlf-converter/SKILL.md` |
+| `utf8-crlf-converter` | 将文本文件转换为 UTF-8 + CRLF，支持带 BOM 和不带 BOM 两种目标格式，并校验输出文件格式 | `skills/utf8-crlf-converter/SKILL.md` |
 | `handoff` | 将长对话或复杂任务整理为 `handoff.md`，作为下一个对话的继续工作重启点 | `skills/handoff/SKILL.md` |
 
 ## 新增 Skill 约定
