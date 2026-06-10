@@ -115,7 +115,7 @@ python -m pip install -r skills/utf8-bom-crlf-converter/scripts/requirements.txt
 执行分支：
 
 - Step 1 通过：进入 Step 2。
-- Step 1 未通过：停止当前流程，按命令输出处理环境问题后重新执行 Step 1。
+- Step 1 未通过：停止当前流程，依据命令输出处理环境问题。
 
 #### Step 2：执行转换
 
