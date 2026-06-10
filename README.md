@@ -14,6 +14,7 @@
 | --- | --- | --- |
 | `encoding-normalizer` | 将未知编码文本按检测置信度转换为 UTF-8 BOM + CRLF | `skills/encoding-normalizer/SKILL.md` |
 | `doc-driven-dev` | 以文档驱动开发：在 `SKILL.md` 中定义 `project/task` 主线与 `finding` 并行记录规则，并要求用 `project.md` 承载项目级规则、介绍、目标与设计 | `skills/doc-driven-dev/SKILL.md` |
+| `handoff` | 将长对话或复杂任务整理为 `handoff.md`，作为下一个对话或 agent 的继续工作重启点 | `skills/handoff/SKILL.md` |
 
 ## 新增 Skill 约定
 
