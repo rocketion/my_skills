@@ -112,12 +112,10 @@ python -m pip install -r skills/utf8-bom-crlf-converter/scripts/requirements.txt
 }
 ```
 
-异常处理：
+执行分支：
 
-- Git 不可用：安装 Git，确认 `git --version` 可正常输出版本号。
-- Python 不可用：安装 Python，确认 `python --version` 可正常输出版本号。
-- 当前目录不在 Git 仓库中：切换到项目根目录；项目尚未初始化时先执行 `git init`。
-- 依赖安装失败：检查 Python、pip、网络访问和 `scripts/requirements.txt`，修复后重新安装依赖。
+- Step 1 通过：进入 Step 2。
+- Step 1 未通过：停止当前流程，按命令输出处理环境问题后重新执行 Step 1。
 
 #### Step 2：执行转换
 
@@ -149,15 +147,10 @@ python skills/utf8-bom-crlf-converter/scripts/convert_utf8_bom_crlf.py convert i
 python skills/utf8-bom-crlf-converter/scripts/convert_utf8_bom_crlf.py convert input.txt --min-confidence 0.85
 ```
 
-异常处理：
+执行分支：
 
-- 输入文件不存在：确认输入路径正确，重新传入存在的文本文件路径。
-- 输入路径是目录：改为传入具体文本文件路径。
-- 输入路径不是普通文件：改为传入普通文本文件路径。
-- 编码检测失败：确认输入是文本文件；若文件来源明确，可先人工确认编码后再处理。
-- 编码检测置信度低于阈值：降低 `--min-confidence` 前先人工确认文件编码；无法确认时不继续转换。
-- 严格解码失败：说明检测编码无法可靠解码原始字节；确认源文件编码或更换输入文件。
-- 转换后校验失败：保留脚本输出的结构化校验结果，按失败字段定位转换脚本问题。
+- 转换成功：进入 Step 3。
+- 转换失败：停止当前流程，保留脚本结构化输出作为失败原因。
 
 #### Step 3：校验结果
 
@@ -183,16 +176,10 @@ python skills/utf8-bom-crlf-converter/scripts/convert_utf8_bom_crlf.py validate 
 - 默认使用 `utf-8-sig` 严格解码验证 UTF-8 合法性。
 - 默认校验失败返回非零退出码。
 
-异常处理：
+执行分支：
 
-- 文件不存在：确认校验命令中的文件路径正确。
-- 路径是目录：改为传入具体文本文件路径。
-- 路径不是普通文件：改为传入普通文本文件路径。
-- 缺少 UTF-8 BOM：该文件不符合目标格式。
-- 存在双 UTF-8 BOM：该文件不符合目标格式。
-- 存在裸 LF：该文件不符合目标格式。
-- 存在裸 CR：该文件不符合目标格式。
-- UTF-8 严格解码失败：该文件不符合目标格式。
+- 校验成功：文件视为有效产物。
+- 校验失败：文件不视为有效产物，保留脚本结构化输出作为校验结果。
 
 ## 注意事项
 
